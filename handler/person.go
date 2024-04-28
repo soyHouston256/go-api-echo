@@ -88,6 +88,27 @@ func (p person) delete(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func (p person) getById(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		responseJSON(w, http.StatusMethodNotAllowed, messageTypeError, "method not allowed", nil)
+		return
+	}
+
+	ID, error := strconv.Atoi(r.URL.Query().Get("id"))
+	if error != nil {
+		responseJSON(w, http.StatusBadRequest, messageTypeError, "bad request", nil)
+		return
+	}
+
+	data, err := p.storage.GetByID(ID)
+	if errors.Is(err, model.ErrIDPersonDoesNotExists) {
+		responseJSON(w, http.StatusNotFound, messageTypeError, "person not found", nil)
+		return
+	}
+	responseJSON(w, http.StatusOK, messageTypeSuccess, "success", &data)
+
+}
+
 func (p person) getAll(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		responseJSON(w, http.StatusMethodNotAllowed, messageTypeError, "method not allowed", nil)

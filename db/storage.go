@@ -88,7 +88,7 @@ func (s *Storage) GetAll() (model.Persons, error) {
 
 func (s *Storage) GetByID(ID int) (*model.Person, error) {
 	var person model.Person
-	result := s.DB.First(&person, ID)
+	result := s.DB.Preload("Communities").First(&person, ID)
 	if result.Error != nil {
 		return &person, result.Error
 	}
