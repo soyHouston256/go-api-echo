@@ -16,5 +16,5 @@ func RoutePerson(mux *http.ServeMux, storage Storage) {
 
 	mux.HandleFunc("/v1/persons/delete", middleware.Log(p.delete))
 
-	mux.HandleFunc("/v1/persons/get-by-id", middleware.Log(p.getById))
+	mux.HandleFunc("/v1/persons/get-by-id", middleware.Log(middleware.Authenticated(p.getById)))
 }
