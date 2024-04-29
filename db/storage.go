@@ -1,7 +1,9 @@
 package db
 
 import (
+	"errors"
 	"fmt"
+	"golang.org/x/crypto/bcrypt"
 	"log"
 
 	"github.com/soyhouston256/go-api/model"
@@ -40,6 +42,11 @@ func (s *Storage) Create(person *model.Person) error {
 	if person == nil {
 		return model.ErrPersonCanNotBeNil
 	}
+	hashedPassword, err := HashPassword(person.Password)
+	if err != nil {
+		return err
+	}
+	person.Password = string(hashedPassword)
 
 	result := s.DB.Create(person)
 	if result.Error != nil {
@@ -97,4 +104,21 @@ func (s *Storage) GetByID(ID int) (*model.Person, error) {
 	}
 
 	return &person, nil
+}
+
+func (s *Storage) FindUserByEmail(email string) (*model.Person, error) {
+	var person model.Person
+	result := s.DB.Where("email = ?", email).First(&person)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, result.Error
+	}
+	return &person, nil
+}
+
+func HashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	return string(bytes), err
 }

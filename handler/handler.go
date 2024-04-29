@@ -8,4 +8,5 @@ type Storage interface {
 	Delete(ID int) error
 	GetAll() (model.Persons, error)
 	GetByID(ID int) (*model.Person, error)
+	FindUserByEmail(email string) (*model.Person, error)
 }

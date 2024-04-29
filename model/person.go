@@ -6,6 +6,9 @@ type Person struct {
 	gorm.Model
 	Name        string
 	Age         int
+	Email       string
+	PhoneNumber string
+	Password    string
 	Communities []Community
 }
 

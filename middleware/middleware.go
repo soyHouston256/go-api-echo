@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"github.com/soyhouston256/go-api/authorization"
 	"log"
 	"net/http"
 	"time"
@@ -18,7 +19,8 @@ func Log(f func(http.ResponseWriter, *http.Request)) func(w http.ResponseWriter,
 func Authenticated(f func(http.ResponseWriter, *http.Request)) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		token := r.Header.Get("Authorization")
-		if token != "secret-token-here" {
+		_, err := authorization.ValidateToken(token)
+		if err != nil {
 			forbidden(w, r)
 			return
 		}
