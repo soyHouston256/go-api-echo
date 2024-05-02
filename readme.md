@@ -14,3 +14,8 @@ Private key
 ```
   go run cmd/main.go
 ``` 
+
+**Up client:**
+```
+  go run client/main.go
+```
