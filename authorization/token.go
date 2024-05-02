@@ -3,7 +3,7 @@ package authorization
 import (
 	"errors"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/soyhouston256/go-api/model"
+	"github.com/soyhouston256/go-api-echo/model"
 	"time"
 )
 

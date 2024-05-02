@@ -1,26 +1,23 @@
 package handler
 
 import (
-	"github.com/soyhouston256/go-api/middleware"
-	"net/http"
+	"github.com/labstack/echo/v4"
+	"github.com/soyhouston256/go-api-echo/middleware"
 )
 
-func RoutePerson(mux *http.ServeMux, storage Storage) {
+func RoutePerson(e *echo.Echo, storage Storage) {
 	p := newPerson(storage)
+	persons := e.Group("/v1/persons")
+	persons.Use(middleware.Authenticated)
+	persons.POST("", p.create)
 
-	mux.HandleFunc("/v1/persons/create", middleware.Log(p.create))
-
-	mux.HandleFunc("/v1/persons/get-all", middleware.Log(p.getAll))
-
-	mux.HandleFunc("/v1/persons/update", middleware.Log(p.update))
-
-	mux.HandleFunc("/v1/persons/delete", middleware.Log(p.delete))
-
-	mux.HandleFunc("/v1/persons/get-by-id", middleware.Log(middleware.Authenticated(p.getById)))
-
+	persons.PUT("/:id", p.update)
+	persons.DELETE("/:id", p.delete)
+	persons.GET("/:id", p.getById)
+	persons.GET("", p.getAll)
 }
 
-func RouteLogin(mux *http.ServeMux, storage Storage) {
+func RouteLogin(e *echo.Echo, storage Storage) {
 	h := newLogin(storage)
-	mux.HandleFunc("/v1/login", h.login)
+	e.POST("/v1/login", h.login)
 }

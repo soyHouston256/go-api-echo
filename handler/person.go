@@ -1,12 +1,12 @@
 package handler
 
 import (
-	"encoding/json"
 	"errors"
+	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"
 
-	"github.com/soyhouston256/go-api/model"
+	"github.com/soyhouston256/go-api-echo/model"
 )
 
 type person struct {
@@ -17,107 +17,93 @@ func newPerson(storage Storage) person {
 	return person{storage}
 }
 
-func (p person) create(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		responseJSON(w, http.StatusMethodNotAllowed, messageTypeError, "method not allowed", nil)
-		return
-	}
+func (p person) create(ctx echo.Context) error {
+
 	data := model.Person{}
-	err := json.NewDecoder(r.Body).Decode(&data)
+	err := ctx.Bind(&data)
 	if err != nil {
-		responseJSON(w, http.StatusBadRequest, messageTypeError, "bad request", nil)
-		return
+		resp := newResponse(messageTypeError, "bad request", nil)
+		return ctx.JSON(http.StatusBadRequest, resp)
 	}
 	err = p.storage.Create(&data)
 	if err != nil {
-		responseJSON(w, http.StatusInternalServerError, messageTypeError, "bad request", nil)
-		return
+		resp := newResponse(messageTypeError, "bad request", nil)
+		return ctx.JSON(http.StatusInternalServerError, resp)
 	}
-	responseJSON(w, http.StatusCreated, messageTypeSuccess, "created", nil)
+	resp := newResponse(messageTypeSuccess, "created", nil)
+	return ctx.JSON(http.StatusCreated, resp)
 }
 
-func (p person) update(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPut {
-		responseJSON(w, http.StatusMethodNotAllowed, messageTypeError, "method not allowed", nil)
-		return
-	}
+func (p person) update(ctx echo.Context) error {
 
-	ID, error := strconv.Atoi(r.URL.Query().Get("id"))
+	ID, error := strconv.Atoi(ctx.Param("id"))
 	if error != nil {
-		responseJSON(w, http.StatusBadRequest, messageTypeError, "bad request", nil)
-		return
+		response := newResponse(messageTypeError, "bad request", nil)
+		return ctx.JSON(http.StatusBadRequest, response)
 	}
 
 	data := model.Person{}
-	err := json.NewDecoder(r.Body).Decode(&data)
+	err := ctx.Bind(&data)
 	if err != nil {
-		responseJSON(w, http.StatusBadRequest, messageTypeError, "bad request", nil)
-		return
+		response := newResponse(messageTypeError, "bad request", nil)
+		return ctx.JSON(http.StatusBadRequest, response)
 	}
 	err = p.storage.Update(ID, &data)
 	if err != nil {
-		responseJSON(w, http.StatusInternalServerError, messageTypeError, "bad request", nil)
-		return
+		response := newResponse(messageTypeError, "bad request", nil)
+		return ctx.JSON(http.StatusInternalServerError, response)
 	}
-	responseJSON(w, http.StatusOK, messageTypeSuccess, "updated", nil)
+	response := newResponse(messageTypeSuccess, "updated", nil)
+	return ctx.JSON(http.StatusOK, response)
 
 }
 
-func (p person) delete(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodDelete {
-		responseJSON(w, http.StatusMethodNotAllowed, messageTypeError, "method not allowed", nil)
-		return
-	}
+func (p person) delete(ctx echo.Context) error {
 
-	ID, error := strconv.Atoi(r.URL.Query().Get("id"))
+	ID, error := strconv.Atoi(ctx.Param("id"))
 	if error != nil {
-		responseJSON(w, http.StatusBadRequest, messageTypeError, "bad request", nil)
-		return
+		response := newResponse(messageTypeError, "bad request", nil)
+		return ctx.JSON(http.StatusBadRequest, response)
 	}
 
 	err := p.storage.Delete(ID)
 	if errors.Is(err, model.ErrIDPersonDoesNotExists) {
-		responseJSON(w, http.StatusNotFound, messageTypeError, "person not found", nil)
-		return
+		response := newResponse(messageTypeError, "person not found", nil)
+		return ctx.JSON(http.StatusNotFound, response)
 	}
 	if err != nil {
-		responseJSON(w, http.StatusInternalServerError, messageTypeError, "bad request", nil)
-		return
+		response := newResponse(messageTypeError, "bad request", nil)
+		return ctx.JSON(http.StatusInternalServerError, response)
 	}
-	responseJSON(w, http.StatusOK, messageTypeSuccess, "deleted", nil)
-
+	response := newResponse(messageTypeSuccess, "deleted", nil)
+	return ctx.JSON(http.StatusOK, response)
 }
 
-func (p person) getById(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		responseJSON(w, http.StatusMethodNotAllowed, messageTypeError, "method not allowed", nil)
-		return
-	}
+func (p person) getById(ctx echo.Context) error {
 
-	ID, error := strconv.Atoi(r.URL.Query().Get("id"))
+	ID, error := strconv.Atoi(ctx.Param("id"))
 	if error != nil {
-		responseJSON(w, http.StatusBadRequest, messageTypeError, "bad request", nil)
-		return
+		response := newResponse(messageTypeError, "bad request", nil)
+		return ctx.JSON(http.StatusBadRequest, response)
 	}
 
 	data, err := p.storage.GetByID(ID)
 	if errors.Is(err, model.ErrIDPersonDoesNotExists) {
-		responseJSON(w, http.StatusNotFound, messageTypeError, "person not found", nil)
-		return
+		response := newResponse(messageTypeError, "person not found", nil)
+		return ctx.JSON(http.StatusNotFound, response)
 	}
-	responseJSON(w, http.StatusOK, messageTypeSuccess, "success", &data)
+	response := newResponse(messageTypeSuccess, "success", data)
+	return ctx.JSON(http.StatusOK, response)
 
 }
 
-func (p person) getAll(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		responseJSON(w, http.StatusMethodNotAllowed, messageTypeError, "method not allowed", nil)
-		return
-	}
+func (p person) getAll(ctx echo.Context) error {
+
 	data, err := p.storage.GetAll()
 	if err != nil {
-		responseJSON(w, http.StatusInternalServerError, messageTypeError, "bad request", nil)
-		return
+		response := newResponse(messageTypeError, "bad request", nil)
+		return ctx.JSON(http.StatusInternalServerError, response)
 	}
-	responseJSON(w, http.StatusOK, messageTypeSuccess, "success", &data)
+	response := newResponse(messageTypeSuccess, "success", data)
+	return ctx.JSON(http.StatusOK, response)
 }

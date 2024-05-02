@@ -2,13 +2,15 @@ package main
 
 import (
 	"fmt"
-	"github.com/soyhouston256/go-api/authorization"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	"github.com/soyhouston256/go-api-echo/authorization"
 	"log"
 	"net/http"
 
-	"github.com/soyhouston256/go-api/db"
-	"github.com/soyhouston256/go-api/handler"
-	"github.com/soyhouston256/go-api/model"
+	"github.com/soyhouston256/go-api-echo/db"
+	"github.com/soyhouston256/go-api-echo/handler"
+	"github.com/soyhouston256/go-api-echo/model"
 )
 
 func main() {
@@ -22,12 +24,15 @@ func main() {
 
 	dbStorage := db.NewDBStorage(db.DB)
 
-	mux := http.NewServeMux()
-	handler.RoutePerson(mux, dbStorage)
-	handler.RouteLogin(mux, dbStorage)
+	e := echo.New()
+	e.Use(middleware.Recover())
+	e.Use(middleware.Logger())
+
+	handler.RoutePerson(e, dbStorage)
+	handler.RouteLogin(e, dbStorage)
 
 	fmt.Println("Server running on port 8081")
-	err = http.ListenAndServe(":8081", mux)
+	err = http.ListenAndServe(":8081", e)
 	if err != nil {
 		fmt.Printf("cant start server: %v", err)
 	}

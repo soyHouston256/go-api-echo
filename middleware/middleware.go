@@ -1,7 +1,8 @@
 package middleware
 
 import (
-	"github.com/soyhouston256/go-api/authorization"
+	"github.com/labstack/echo/v4"
+	"github.com/soyhouston256/go-api-echo/authorization"
 	"log"
 	"net/http"
 	"time"
@@ -16,20 +17,13 @@ func Log(f func(http.ResponseWriter, *http.Request)) func(w http.ResponseWriter,
 	}
 }
 
-func Authenticated(f func(http.ResponseWriter, *http.Request)) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		token := r.Header.Get("Authorization")
+func Authenticated(f echo.HandlerFunc) echo.HandlerFunc {
+	return func(ctx echo.Context) error {
+		token := ctx.Request().Header.Get("Authorization")
 		_, err := authorization.ValidateToken(token)
 		if err != nil {
-			forbidden(w, r)
-			return
+			return ctx.JSON(http.StatusForbidden, map[string]string{"message": "forbidden"})
 		}
-		f(w, r)
+		return f(ctx)
 	}
-}
-
-func forbidden(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusForbidden)
-	w.Write([]byte(`{"message": "forbidden"}`))
 }

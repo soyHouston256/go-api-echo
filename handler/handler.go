@@ -1,6 +1,6 @@
 package handler
 
-import "github.com/soyhouston256/go-api/model"
+import "github.com/soyhouston256/go-api-echo/model"
 
 type Storage interface {
 	Create(person *model.Person) error

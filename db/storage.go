@@ -6,7 +6,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"log"
 
-	"github.com/soyhouston256/go-api/model"
+	"github.com/soyhouston256/go-api-echo/model"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

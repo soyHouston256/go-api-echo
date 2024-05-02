@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"encoding/json"
-	"github.com/soyhouston256/go-api/authorization"
-	"github.com/soyhouston256/go-api/model"
+	"github.com/labstack/echo/v4"
+	"github.com/soyhouston256/go-api-echo/authorization"
+	"github.com/soyhouston256/go-api-echo/model"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 )
@@ -16,28 +16,26 @@ func newLogin(storage Storage) login {
 	return login{storage}
 }
 
-func (l *login) login(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		responseJSON(w, http.StatusMethodNotAllowed, messageTypeError, "method not allowed", nil)
-		return
-	}
+func (l *login) login(ctx echo.Context) error {
+
 	data := model.Login{}
-	err := json.NewDecoder(r.Body).Decode(&data)
+	err := ctx.Bind(&data)
 	if err != nil {
-		responseJSON(w, http.StatusBadRequest, messageTypeError, "bad request", nil)
-		return
+		resp := newResponse(messageTypeError, "bad request", nil)
+		return ctx.JSON(http.StatusBadRequest, resp)
 	}
 	if !isValidLogin(data, l) {
-		responseJSON(w, http.StatusUnauthorized, messageTypeError, "unauthorized", nil)
-		return
+		resp := newResponse(messageTypeError, "unauthorized", nil)
+		return ctx.JSON(http.StatusUnauthorized, resp)
 	}
 	token, err := authorization.GenerateToken(&data)
 	if err != nil {
-		responseJSON(w, http.StatusInternalServerError, messageTypeError, "bad request", nil)
-		return
+		resp := newResponse(messageTypeError, "bad request", nil)
+		return ctx.JSON(http.StatusInternalServerError, resp)
 	}
 
-	responseJSON(w, http.StatusOK, messageTypeSuccess, "token", token)
+	resp := newResponse(messageTypeSuccess, "token", token)
+	return ctx.JSON(http.StatusOK, resp)
 
 }
 
