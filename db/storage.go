@@ -3,8 +3,9 @@ package db
 import (
 	"errors"
 	"fmt"
-	"golang.org/x/crypto/bcrypt"
 	"log"
+
+	"golang.org/x/crypto/bcrypt"
 
 	"github.com/soyhouston256/go-api-echo/model"
 	"gorm.io/driver/postgres"
@@ -60,6 +61,12 @@ func (s *Storage) Update(ID int, person *model.Person) error {
 	if person == nil {
 		return model.ErrPersonCanNotBeNil
 	}
+
+	hashedPassword, err := HashPassword(person.Password)
+	if err != nil {
+		return err
+	}
+	person.Password = string(hashedPassword)
 
 	result := s.DB.Model(&model.Person{}).Where("id = ?", ID).Updates(person)
 	if result.Error != nil {

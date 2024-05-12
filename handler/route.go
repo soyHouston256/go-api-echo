@@ -10,7 +10,6 @@ func RoutePerson(e *echo.Echo, storage Storage) {
 	persons := e.Group("/v1/persons")
 	persons.Use(middleware.Authenticated)
 	persons.POST("", p.create)
-
 	persons.PUT("/:id", p.update)
 	persons.DELETE("/:id", p.delete)
 	persons.GET("/:id", p.getById)
