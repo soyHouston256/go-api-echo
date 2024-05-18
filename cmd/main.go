@@ -2,15 +2,16 @@ package main
 
 import (
 	"fmt"
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
-	"github.com/soyhouston256/go-api-echo/authorization"
 	"log"
 	"net/http"
 
-	"github.com/soyhouston256/go-api-echo/db"
-	"github.com/soyhouston256/go-api-echo/handler"
-	"github.com/soyhouston256/go-api-echo/model"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	"github.com/soyhouston256/go-api-echo-test/authorization"
+
+	"github.com/soyhouston256/go-api-echo-test/db"
+	"github.com/soyhouston256/go-api-echo-test/handler"
+	"github.com/soyhouston256/go-api-echo-test/model"
 )
 
 func main() {

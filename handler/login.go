@@ -1,11 +1,12 @@
 package handler
 
 import (
-	"github.com/labstack/echo/v4"
-	"github.com/soyhouston256/go-api-echo/authorization"
-	"github.com/soyhouston256/go-api-echo/model"
-	"golang.org/x/crypto/bcrypt"
 	"net/http"
+
+	"github.com/labstack/echo/v4"
+	"github.com/soyhouston256/go-api-echo-test/authorization"
+	"github.com/soyhouston256/go-api-echo-test/model"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type login struct {

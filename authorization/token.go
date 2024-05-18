@@ -2,9 +2,10 @@ package authorization
 
 import (
 	"errors"
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/soyhouston256/go-api-echo/model"
 	"time"
+
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/soyhouston256/go-api-echo-test/model"
 )
 
 func GenerateToken(data *model.Login) (string, error) {

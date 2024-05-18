@@ -2,7 +2,7 @@ package handler
 
 import (
 	"github.com/labstack/echo/v4"
-	"github.com/soyhouston256/go-api-echo/middleware"
+	"github.com/soyhouston256/go-api-echo-test/middleware"
 )
 
 func RoutePerson(e *echo.Echo, storage Storage) {

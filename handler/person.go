@@ -2,11 +2,12 @@ package handler
 
 import (
 	"errors"
-	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"
 
-	"github.com/soyhouston256/go-api-echo/model"
+	"github.com/labstack/echo/v4"
+
+	"github.com/soyhouston256/go-api-echo-test/model"
 )
 
 type person struct {

@@ -1,11 +1,12 @@
 package middleware
 
 import (
-	"github.com/labstack/echo/v4"
-	"github.com/soyhouston256/go-api-echo/authorization"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/labstack/echo/v4"
+	"github.com/soyhouston256/go-api-echo-test/authorization"
 )
 
 func Log(f func(http.ResponseWriter, *http.Request)) func(w http.ResponseWriter, r *http.Request) {
